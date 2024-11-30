@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Bitcoin Price Tracker to $100k 🚀
+
+A real-time Bitcoin price tracker that shows the progress towards $100,000, powered by [Pyth Network](https://pyth.network)'s price feeds.
+
+## Features
+
+- Real-time Bitcoin price updates
+- Visual progress bar towards $100k
+- Price trend indicators (up/down arrows)
+- Responsive design
+- Dark mode interface
+
+## Tech Stack
+
+- [Next.js](https://nextjs.org) - React framework
+- [Tailwind CSS](https://tailwindcss.com) - Styling
+- [Pyth Network](https://pyth.network) - Real-time price data
+- [shadcn/ui](https://ui.shadcn.com/) - UI components
 
 ## Getting Started
 
-First, run the development server:
-
+1. Clone the repository:
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/pyth-network/bitcoin-price-tracker.git
+cd bitcoin-price-tracker
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+```bash
+npm install
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. Run the development server:
+```bash
+npm run dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Learn More
+## Live Demo
 
-To learn more about Next.js, take a look at the following resources:
+Visit the live demo at: [Bitcoin Price Tracker](https://btc-100k.vercel.app)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Contributing
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Contributions are welcome! Feel free to open issues or submit pull requests.
 
-## Deploy on Vercel
+## License
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Open source - feel free to use and modify.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Contact
+
+For questions or feedback, reach out to [@josedonato__](https://twitter.com/josedonato__) on Twitter.
+
+---
+
+Built with ❤️ using [Next.js](https://nextjs.org) and [v0](https://v0.dev), deployed on [Vercel](https://vercel.com)
