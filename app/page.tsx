@@ -1,101 +1,184 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import PoweredByPyth from "@/components/icons/PoweredByPyth";
+import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Separator } from "@/components/ui/separator";
+import {
+	PriceStatus,
+	type PythCluster,
+	PythConnection,
+	getPythClusterApiUrl,
+	getPythProgramKeyForCluster,
+} from "@pythnetwork/client";
+import { Connection, PublicKey } from "@solana/web3.js";
+import { ArrowDown, ArrowUp, Bitcoin, Loader2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+export default function BitcoinPriceTracker() {
+	const [price, setPrice] = useState<number>(0);
+	const [status, setStatus] = useState<string>("connecting");
+	const prevPriceRef = useRef<number>(0);
+	const [trend, setTrend] = useState<"up" | "down" | null>(null);
+
+	useEffect(() => {
+		const PYTHNET_CLUSTER_NAME: PythCluster = "pythnet";
+		const connection = new Connection(
+			getPythClusterApiUrl(PYTHNET_CLUSTER_NAME),
+		);
+		const pythPublicKey = getPythProgramKeyForCluster(PYTHNET_CLUSTER_NAME);
+		const btcFeed = new PublicKey(
+			"GVXRSBjFk6e6J3NbVPXohDJetcTjaeeuykUpbQF8UoMU",
+		);
+
+		const pythConnection = new PythConnection(
+			connection,
+			pythPublicKey,
+			"confirmed",
+			[btcFeed],
+		);
+
+		pythConnection.onPriceChangeVerbose((productAccount, priceAccount) => {
+			const price = priceAccount.accountInfo.data;
+			if (price.price && price.confidence) {
+				const newPrice = price.price;
+				setTrend(newPrice > prevPriceRef.current ? "up" : "down");
+				prevPriceRef.current = newPrice;
+				setPrice(newPrice);
+				setStatus("live");
+			} else {
+				setStatus(PriceStatus[price.status]);
+			}
+		});
+
+		pythConnection.start();
+
+		return () => {
+			pythConnection.stop();
+		};
+	}, []);
+
+	const formattedPrice = useMemo(() => {
+		return price.toLocaleString("en-US", {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		});
+	}, [price]);
+
+	const progressPercentage = useMemo(() => {
+		const target = 100000;
+		return (price / target) * 100;
+	}, [price]);
+
+	return (
+		<div className="min-h-screen bg-[#1a1b26] flex items-center justify-center p-4">
+			<Card className="w-full max-w-2xl bg-transparent border-none text-white shadow-none">
+				<div className="space-y-8">
+					<div className="flex items-center flex-col justify-center gap-2 text-[#f7931a]">
+						<Bitcoin className="w-20 h-20" />
+						<h1 className="text-2xl md:text-3xl font-bold">
+							Bitcoin Countdown to $100k
+						</h1>
+					</div>
+
+					{status === "live" ? (
+						<>
+							<div className="text-center">
+								<div className="text-5xl md:text-7xl font-bold tracking-tighter flex items-center justify-center">
+									${formattedPrice}
+									{trend === "up" && (
+										<ArrowUp className="w-8 h-8 text-green-500 ml-2" />
+									)}
+									{trend === "down" && (
+										<ArrowDown className="w-8 h-8 text-red-500 ml-2" />
+									)}
+								</div>
+							</div>
+
+							<div className="space-y-2">
+								<div className="flex justify-between text-sm text-gray-400">
+									<span>$0</span>
+									<span>Progress to $100k</span>
+									<span>🚀</span>
+								</div>
+								<Progress
+									value={progressPercentage}
+									max={100}
+									className="w-full"
+								/>
+							</div>
+						</>
+					) : (
+						<div className="flex items-center justify-center">
+							<Loader2 className="w-8 h-8 animate-spin" />
+						</div>
+					)}
+
+					<div className="flex items-center justify-center gap-4">
+						<a
+							href="https://pyth.network"
+							target="_blank"
+							rel="noreferrer noopener"
+						>
+							<PoweredByPyth className="w-24 h-24" />
+						</a>
+					</div>
+				</div>
+				<div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%]">
+					<Separator className="mb-8 opacity-50" />
+					<footer className="text-center text-xs text-gray-600 space-y-2 w-full">
+						<p>
+							built with{" "}
+							<a
+								href="https://nextjs.org"
+								target="_blank"
+								rel="noreferrer noopener"
+								className="underline hover:text-gray-200"
+							>
+								Next.js
+							</a>{" "}
+							and{" "}
+							<a
+								href="https://v0.dev"
+								target="_blank"
+								rel="noreferrer noopener"
+								className="underline hover:text-gray-200"
+							>
+								v0
+							</a>
+							, deployed on{" "}
+							<a
+								href="https://vercel.com"
+								target="_blank"
+								rel="noreferrer noopener"
+								className="underline hover:text-gray-200"
+							>
+								Vercel
+							</a>
+						</p>
+						<p>
+							code open source{" "}
+							<a
+								href="https://github.com/pyth-network/bitcoin-price-tracker"
+								target="_blank"
+								rel="noreferrer noopener"
+								className="underline hover:text-gray-200"
+							>
+								here
+							</a>
+							. any question dm{" "}
+							<a
+								href="https://twitter.com/josedonato__"
+								target="_blank"
+								rel="noreferrer noopener"
+								className="underline hover:text-gray-200"
+							>
+								@josedonato__
+							</a>
+						</p>
+					</footer>
+				</div>
+			</Card>
+		</div>
+	);
 }
