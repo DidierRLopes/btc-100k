@@ -159,7 +159,7 @@ export default function BitcoinPriceTracker() {
 						<p>
 							code open source{" "}
 							<a
-								href="https://github.com/pyth-network/bitcoin-price-tracker"
+								href="https://github.com/jose-donato/btc-100k"
 								target="_blank"
 								rel="noreferrer noopener"
 								className="underline hover:text-gray-200"
