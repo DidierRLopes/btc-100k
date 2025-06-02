@@ -66,26 +66,43 @@ export default function BitcoinPriceTracker() {
 	}, [price]);
 
 	const progressPercentage = useMemo(() => {
-		const target = 100000;
+		const target = 103613; // James Wynn's liquidation price
 		return (price / target) * 100;
 	}, [price]);
 
+	const priceDifference = useMemo(() => {
+		const target = 103613;
+		const difference = Math.abs(target - price);
+		return difference.toLocaleString("en-US", {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 2,
+		});
+	}, [price]);
+
 	return (
-		<div className="min-h-screen bg-[#1a1b26] flex items-center justify-center p-4">
-			<Card className="w-full max-w-2xl bg-transparent border-none text-white shadow-none">
+		<div 
+			className="min-h-screen bg-[#1a1b26] flex items-center justify-center p-4 relative"
+			style={{
+				backgroundImage: 'url("https://pbs.twimg.com/profile_images/1929471787030683648/SBbLOZkA_400x400.jpg")',
+				backgroundSize: 'cover',
+				backgroundPosition: 'center',
+				backgroundRepeat: 'no-repeat',
+			}}
+		>
+			<div className="absolute inset-0 bg-black/80" />
+			<Card className="w-full max-w-2xl bg-transparent border-none text-white shadow-none relative z-10">
 				<div className="space-y-8">
 					<div className="flex items-center flex-col justify-center gap-2 text-[#f7931a]">
-						<Bitcoin className="w-20 h-20" />
 						<h1 className="text-2xl md:text-3xl font-bold">
-							Bitcoin Countdown to $100k
+							@JamesWynnReal Liquidation
 						</h1>
 					</div>
 
 					{status === "live" ? (
 						<>
-							<div className="text-center">
+							<div className="text-center space-y-4">
 								<div className="text-5xl md:text-7xl font-bold tracking-tighter flex items-center justify-center">
-									${formattedPrice}
+									${priceDifference}
 									{trend === "up" && (
 										<ArrowUp className="w-8 h-8 text-green-500 ml-2" />
 									)}
@@ -93,19 +110,10 @@ export default function BitcoinPriceTracker() {
 										<ArrowDown className="w-8 h-8 text-red-500 ml-2" />
 									)}
 								</div>
-							</div>
-
-							<div className="space-y-2">
-								<div className="flex justify-between text-sm text-gray-400">
-									<span>$0</span>
-									<span>Progress to $100k</span>
-									<span>🚀</span>
+								<div className="space-y-2 text-xl md:text-2xl text-gray-400">
+									<div>Current Price: ${formattedPrice}</div>
+									<div>Liquidation Price: $103,613</div>
 								</div>
-								<Progress
-									value={progressPercentage}
-									max={100}
-									className="w-full"
-								/>
 							</div>
 						</>
 					) : (
@@ -125,58 +133,6 @@ export default function BitcoinPriceTracker() {
 					</div>
 				</div>
 				<div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[90%]">
-					<Separator className="mb-8 opacity-50" />
-					<footer className="text-center text-xs text-gray-600 space-y-2 w-full">
-						<p>
-							built with{" "}
-							<a
-								href="https://nextjs.org"
-								target="_blank"
-								rel="noreferrer noopener"
-								className="underline hover:text-gray-200"
-							>
-								Next.js
-							</a>{" "}
-							and{" "}
-							<a
-								href="https://v0.dev"
-								target="_blank"
-								rel="noreferrer noopener"
-								className="underline hover:text-gray-200"
-							>
-								v0
-							</a>
-							, deployed on{" "}
-							<a
-								href="https://vercel.com"
-								target="_blank"
-								rel="noreferrer noopener"
-								className="underline hover:text-gray-200"
-							>
-								Vercel
-							</a>
-						</p>
-						<p>
-							code open source{" "}
-							<a
-								href="https://github.com/jose-donato/btc-100k"
-								target="_blank"
-								rel="noreferrer noopener"
-								className="underline hover:text-gray-200"
-							>
-								here
-							</a>
-							. any question dm{" "}
-							<a
-								href="https://twitter.com/josedonato__"
-								target="_blank"
-								rel="noreferrer noopener"
-								className="underline hover:text-gray-200"
-							>
-								@josedonato__
-							</a>
-						</p>
-					</footer>
 				</div>
 			</Card>
 		</div>
