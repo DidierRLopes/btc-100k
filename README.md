@@ -1,21 +1,10 @@
-# Bitcoin Price Tracker to $100k 🚀
+# Track Liquidation of JamesWynnReal
 
-A real-time Bitcoin price tracker that shows the progress towards $100,000, powered by [Pyth Network](https://pyth.network)'s price feeds.
+![CleanShot 2025-06-02 at 17 39 39](https://github.com/user-attachments/assets/4d6313f3-481e-4be2-8c05-f75a49550d62)
 
-## Features
+Powered by [Pyth Network](https://pyth.network)'s price feeds.
 
-- Real-time Bitcoin price updates
-- Visual progress bar towards $100k
-- Price trend indicators (up/down arrows)
-- Responsive design
-- Dark mode interface
-
-## Tech Stack
-
-- [Next.js](https://nextjs.org) - React framework
-- [Tailwind CSS](https://tailwindcss.com) - Styling
-- [Pyth Network](https://pyth.network) - Real-time price data
-- [shadcn/ui](https://ui.shadcn.com/) - UI components
+Forked from [https://github.com/jose-donato/btc-100k](https://github.com/jose-donato/btc-100k).
 
 ## Getting Started
 
@@ -36,23 +25,3 @@ npm run dev
 ```
 
 4. Open [http://localhost:3000](http://localhost:3000) in your browser.
-
-## Live Demo
-
-Visit the live demo at: [Bitcoin Price Tracker](https://btc-100k.vercel.app)
-
-## Contributing
-
-Contributions are welcome! Feel free to open issues or submit pull requests.
-
-## License
-
-Open source - feel free to use and modify.
-
-## Contact
-
-For questions or feedback, reach out to [@josedonato__](https://twitter.com/josedonato__) on Twitter.
-
----
-
-Built with ❤️ using [Next.js](https://nextjs.org) and [v0](https://v0.dev), deployed on [Vercel](https://vercel.com)
